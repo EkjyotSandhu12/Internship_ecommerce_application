@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+
+import 'GlobalData.dart';
 
 class SignupPage extends StatefulWidget {
   @override
@@ -12,6 +17,7 @@ class SignupState extends State<SignupPage> {
   String sName = "";
   late String sPassword;
   String sContact = "";
+  String sGender = "male";
 
   int radioGroupValue = 0;
 
@@ -135,6 +141,7 @@ class SignupState extends State<SignupPage> {
                             setState(() {
                               print("Male");
                               radioGroupValue = 0;
+                              sGender = "male";
                             });
                           }),
                       Text("Male")
@@ -149,6 +156,7 @@ class SignupState extends State<SignupPage> {
                             setState(() {
                               print(radioValue);
                               radioGroupValue = 1;
+                              sGender = "female";
                             });
                           }),
                       Text("Female")
@@ -163,6 +171,7 @@ class SignupState extends State<SignupPage> {
                             setState(() {
                               radioGroupValue = 2;
                               print("Transgender");
+                              sGender = "transgender";
                             });
                           }),
                       Text("Transgender")
@@ -203,6 +212,9 @@ class SignupState extends State<SignupPage> {
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
                             formKey.currentState!.save();
+
+                            registerData(sName, sEmail, sContact, sPassword,
+                                sGender, sCity);
                           }
                         },
                         child: Text(
@@ -219,5 +231,36 @@ class SignupState extends State<SignupPage> {
       ),
       // This trailing comma makes auto-formatting nicer for build methods.
     );
+  }
+
+
+  void registerData(String sName, String sEmail, String sContact,
+      String sPassword, String sGender, String sCity) async {
+    Map map = {
+      'name': sName,
+      'email': sEmail,
+      'contact': sContact,
+      'password': sPassword,
+      'city': sCity,
+      'gender': sGender
+    };
+    var response =
+    await http.post(Uri.parse(GlobalData.BASE_URL + "signup.php"), body: map);
+    if (response.statusCode == 200) {
+      var jsonResponse = json.decode(response.body);
+      if (jsonResponse["Status"] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                jsonResponse['Message'])));
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+                jsonResponse['Message'])));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text(
+              'Server Error Code : ${response.statusCode}')));
+    }
   }
 }
