@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class DetailsPage extends StatelessWidget{
 
   String itemName;
-  int itemPrice;
+  String itemPrice;
   String itemDescription;
 
   DetailsPage(this.itemName, this.itemPrice, this.itemDescription);

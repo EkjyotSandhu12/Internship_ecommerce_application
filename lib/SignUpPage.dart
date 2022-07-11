@@ -245,7 +245,7 @@ class SignupState extends State<SignupPage> {
       'gender': sGender
     };
     var response =
-    await http.post(Uri.parse(GlobalData.BASE_URL + "signup.php"), body: map);
+    await http.post(Uri.parse(AppUrl.BASE_URL + "signup.php"), body: map);
     if (response.statusCode == 200) {
       var jsonResponse = json.decode(response.body);
       if (jsonResponse["Status"] == true) {
